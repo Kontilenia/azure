@@ -1,3 +1,4 @@
 #!/bin/sh
 
-pip install -r requirements.txt --user
+python -m venv .venv
+./.venv/Scripts/python -m pip install -r requirements.txt
