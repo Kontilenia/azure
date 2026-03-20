@@ -1,17 +1,21 @@
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-PROJECT_ENDPOINT  = "https://KontileniaTestFoundry.openai.azure.com/openai/v1/"
-DEPLOYMENT_NAME = "gpt-4o-mini-t"
+load_dotenv()
+
+project_endpoint  = os.getenv("AIPROJECT_ENDPOINT")
+deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
 token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 
 client = OpenAI(
-    base_url=PROJECT_ENDPOINT,
+    base_url=project_endpoint,
     api_key=token_provider
 )
 
 completion = client.chat.completions.create(
-    model=DEPLOYMENT_NAME,
+    model=deployment_name,
     messages=[
         {
             "role": "user",
