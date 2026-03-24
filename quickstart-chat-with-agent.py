@@ -2,12 +2,13 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from openai import APIConnectionError
 
 
 # Format: "https://resource_name.ai.azure.com/api/projects/project_name"
 load_dotenv()
 
-project_endpoint = os.getenv("AIPROJECT_ENDPOINT")
+project_endpoint = os.getenv("AZURE_PROJECT_ENDPOINT")
 agent_name = os.getenv("AGENT_NAME")
 
 # Create project and openai clients to call Foundry API
@@ -18,7 +19,14 @@ project = AIProjectClient(
 openai = project.get_openai_client()
 
 # Create a conversation for multi-turn chat
-conversation = openai.conversations.create()
+# conversation = openai.conversations.create()
+
+try:
+    conversation = openai.conversations.create()
+except APIConnectionError as e:
+    print("APIConnectionError:", e)
+    print("Cause:", repr(e.__cause__))
+    raise
 
 # Chat with the agent to answer questions
 response = openai.responses.create(

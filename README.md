@@ -11,5 +11,5 @@ sh install.sh
 ## Run
 
 ```sh
-./.venv/Scripts/python run_model.py
+./.venv/bin/python run_model.py
 ```

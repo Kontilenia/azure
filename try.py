@@ -1,24 +1,21 @@
 import os
-from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
 
-load_dotenv()
-
-project_endpoint = os.getenv("AZURE_PROJECT_ENDPOINT")
-agent_name = os.getenv("AGENT_NAME")
-model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
+# Format: "https://resource_name.ai.azure.com/api/projects/project_name"
+PROJECT_ENDPOINT = os.getenv("AZURE_PROJECT_ENDPOINT")
+AGENT_NAME = "third-test"
 
 # Create project client to call Foundry API
 project = AIProjectClient(
-    endpoint=project_endpoint,
+    endpoint=PROJECT_ENDPOINT,
     credential=DefaultAzureCredential(),
 )
 
 # Create an agent with a model and instructions
 agent = project.agents.create_version(
-    agent_name=agent_name,
+    agent_name=AGENT_NAME,
     definition=PromptAgentDefinition(
         model="gpt-5-mini",  # supports all Foundry direct models"
         instructions="You are a helpful assistant that answers general questions",
