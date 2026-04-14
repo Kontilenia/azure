@@ -1,24 +1,22 @@
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-endpoint = "https://KontileniaTestFoundry.openai.azure.com/openai/v1/"
-deployment_name = "gpt-4o-mini-t"
+load_dotenv()
+
+project_endpoint  = os.getenv("AZURE_OPENAI_ENDPOINT")
+deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
 token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 
 client = OpenAI(
-    base_url=endpoint,
+    base_url=project_endpoint,
     api_key=token_provider
 )
 
-completion = client.chat.completions.create(
+response = client.responses.create(
     model=deployment_name,
-    messages=[
-        {
-            "role": "user",
-            "content": "What is the capital of France?",
-        }
-    ],
-    temperature=0.7,
+    input="What is the capital of France?",
 )
 
-print(completion.choices[0].message)
+print(f"answer: {response.output[1].content[0].text}")
