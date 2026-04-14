@@ -20,7 +20,7 @@ project = AIProjectClient(
 agent = project.agents.create_version(
     agent_name=agent_name,
     definition=PromptAgentDefinition(
-        model="gpt-5-mini",  # supports all Foundry direct models"
+        model="gpt-5-mini", 
         instructions="You are a helpful assistant that answers general questions",
     ),
 )
