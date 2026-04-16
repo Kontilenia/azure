@@ -13,3 +13,6 @@ __pycache__/
 
 ## Node Modules
 node_modules/
+
+# Bicep parameters files
+bicep/*.bicepparam
