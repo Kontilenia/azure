@@ -9,6 +9,9 @@ param searchServiceName string
 @description('Name of the existing AI Services account to connect to.')
 param accountName string
 
+@description('Principal ID of the deployer. Defaults to the identity running the deployment.')
+param deployerPrincipalId string = deployer().objectId
+
 resource searchService 'Microsoft.Search/searchServices@2023-11-01' = {
   name: searchServiceName
   location: location
@@ -40,6 +43,7 @@ resource existingAccount 'Microsoft.CognitiveServices/accounts@2024-10-01' exist
 // Grant the AI Services account's identity access to the search service
 var searchIndexDataContributorRoleId = '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
 var searchServiceContributorRoleId = '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
+var searchIndexDataReaderRoleId = '1407120a-92aa-4202-b7e9-c0e197c71c8f'
 
 resource roleAssignmentIndexData 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: searchService
@@ -58,6 +62,37 @@ resource roleAssignmentServiceContributor 'Microsoft.Authorization/roleAssignmen
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', searchServiceContributorRoleId)
     principalId: existingAccount.identity.principalId
     principalType: 'ServicePrincipal'
+  }
+}
+
+// Grant the deploying user access to the search service
+resource roleAssignmentDeployerIndexDataContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: searchService
+  name: guid(searchService.id, deployerPrincipalId, searchIndexDataContributorRoleId)
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', searchIndexDataContributorRoleId)
+    principalId: deployerPrincipalId
+    principalType: 'User'
+  }
+}
+
+resource roleAssignmentDeployerServiceContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: searchService
+  name: guid(searchService.id, deployerPrincipalId, searchServiceContributorRoleId)
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', searchServiceContributorRoleId)
+    principalId: deployerPrincipalId
+    principalType: 'User'
+  }
+}
+
+resource roleAssignmentDeployerIndexDataReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: searchService
+  name: guid(searchService.id, deployerPrincipalId, searchIndexDataReaderRoleId)
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', searchIndexDataReaderRoleId)
+    principalId: deployerPrincipalId
+    principalType: 'User'
   }
 }
 
