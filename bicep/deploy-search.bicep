@@ -9,6 +9,9 @@ param searchServiceName string
 @description('Name of the existing AI Services account to connect to.')
 param accountName string
 
+@description('Name of the existing Foundry project.')
+param projectName string
+
 @description('Principal ID of the deployer. Defaults to the identity running the deployment.')
 param deployerPrincipalId string = deployer().objectId
 
@@ -40,6 +43,11 @@ resource existingAccount 'Microsoft.CognitiveServices/accounts@2024-10-01' exist
   name: accountName
 }
 
+resource existingProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' existing = {
+  parent: existingAccount
+  name: projectName
+}
+
 // Grant the AI Services account's identity access to the search service
 var searchIndexDataContributorRoleId = '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
 var searchServiceContributorRoleId = '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
@@ -65,7 +73,26 @@ resource roleAssignmentServiceContributor 'Microsoft.Authorization/roleAssignmen
   }
 }
 
-// Grant the deploying user access to the search service
+// Grant the Foundry project's managed identity access to the search service
+resource roleAssignmentProjectIndexData 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: searchService
+  name: guid(searchService.id, existingProject.id, searchIndexDataContributorRoleId)
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', searchIndexDataContributorRoleId)
+    principalId: existingProject.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource roleAssignmentProjectServiceContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: searchService
+  name: guid(searchService.id, existingProject.id, searchServiceContributorRoleId)
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', searchServiceContributorRoleId)
+    principalId: existingProject.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
 resource roleAssignmentDeployerIndexDataContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: searchService
   name: guid(searchService.id, deployerPrincipalId, searchIndexDataContributorRoleId)
