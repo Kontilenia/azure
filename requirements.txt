@@ -1,5 +1,9 @@
 ansible-core~=2.19.7
 azure-ai-projects>=2.0.0
 azure-identity~=1.25.2
+azure-search-documents>=11.6.0
+langchain>=0.3.0
+langchain-community>=0.3.0
 openai~=2.8.0
+pymupdf>=1.24.0
 python-dotenv~=1.0.1

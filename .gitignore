@@ -16,3 +16,6 @@ node_modules/
 
 # Bicep parameters files
 bicep/*.bicepparam
+
+## Data folder
+data/

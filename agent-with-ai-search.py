@@ -11,10 +11,10 @@ from azure.ai.projects.models import (
 )
 
 load_dotenv()
-# Format: "https://resource_name.ai.azure.com/api/projects/project_name"
-PROJECT_ENDPOINT = os.getenv("PROJECT_ENDPOINT")
-SEARCH_CONNECTION_NAME = os.getenv("SEARCH_CONNECTION_NAME")
-SEARCH_INDEX_NAME = os.getenv("SEARCH_INDEX_NAME")
+
+PROJECT_ENDPOINT = os.getenv("AZURE_PROJECT_ENDPOINT")
+SEARCH_CONNECTION_NAME = os.getenv("AI_SEARCH_CONNECTION_NAME")
+SEARCH_INDEX_NAME = os.getenv("AI_SEARCH_INDEX_NAME")
 
 # Create clients to call Foundry API
 project = AIProjectClient(
