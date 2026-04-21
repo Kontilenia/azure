@@ -15,6 +15,7 @@ load_dotenv()
 PROJECT_ENDPOINT = os.getenv("AZURE_PROJECT_ENDPOINT")
 SEARCH_CONNECTION_NAME = os.getenv("AI_SEARCH_CONNECTION_NAME")
 SEARCH_INDEX_NAME = os.getenv("AI_SEARCH_INDEX_NAME")
+AGENT_NAME = os.getenv("AGENT_NAME")
 
 # Create clients to call Foundry API
 project = AIProjectClient(
@@ -29,7 +30,7 @@ connection_id = azs_connection.id
 
 # Create an agent with the Azure AI Search tool
 agent = project.agents.create_version(
-    agent_name="MyAgent",
+    agent_name=AGENT_NAME,
     definition=PromptAgentDefinition(
         model="gpt-4.1-mini",
         instructions="""You are a helpful assistant. You must always provide citations for
